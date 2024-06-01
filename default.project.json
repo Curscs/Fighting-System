@@ -6,7 +6,10 @@
             "$className": "ReplicatedStorage",
             "$path": "src/ReplicatedStorage",
             "Packages": {
-                "$path": "Packages"
+                "$path": "Packages",
+                "Zone": {
+                    "$path": "ZonePlus"
+                }
             },
             "Misc":{
                 "$className": "Folder"
