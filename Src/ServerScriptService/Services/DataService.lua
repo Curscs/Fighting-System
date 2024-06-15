@@ -16,8 +16,9 @@ local DataService = Knit.CreateService {
             Pets = {};
             Items = {};
         };
+        Shops = {};
         Zones = {
-            ["Long Roads"] = {
+            ["The Town of The Beginning"] = {
                 DiscoverTime = 0
             }
         };

@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local DeepcopyUtil = require(ReplicatedStorage.Util.DeepcopyUtil)
-
+local TableUtil = require(ReplicatedStorage.Packages.TableUtil)
 local Zone = {}
 
 function Zone.new(name: string, npcs: table)
@@ -20,14 +19,14 @@ Zone.Zones = {
 function Zone.GetChance(zonename: string, npcname: string)
     if Zone.Zones[zonename] then
         local Value = Zone.Zones[zonename]["NPCs"][npcname]
-        return DeepcopyUtil:Copy(Value)
+        return TableUtil.Copy(Value, true)
     end
 end
 
 function Zone.GetAllNPCs(zonename: string)
     if Zone.Zones[zonename] then
         local Value = Zone.Zones[zonename]["NPCs"]
-        return DeepcopyUtil:Copy(Value)
+        return TableUtil.Copy(Value, true)
     end
 end
 
