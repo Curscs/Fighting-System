@@ -12,28 +12,60 @@ function Shop.new(name: string, resettime: number, items: table)
 end
 
 Shop.Shops = {
-    ["Beginner Market"] = Shop.new("Beginner Market", 300, {
+    ["Beginners Market"] = Shop.new("Beginner Market", 70, {
         ["Wooden Sword"] = {
             ["Chance"] = 50,
-            ["Type"] = "Sword",
+            ["Type"] = "Swords",
             ["Currency"] = "Coins",
-            ["Stock"] = 10,
-            ["Price"] = 300,
+            ["MinStock"] = 3,
+            ["MaxStock"] = 10,
+            ["Price"] = 100,
         },
-
-        ["Test"] = {
-            ["Chance"] = 30,
-            ["Type"] = "Item",
+        ["???"] = {
+            ["Chance"] = 50,
+            ["Type"] = "Pets",
             ["Currency"] = "Coins",
-            ["Stock"] = 10,
-            ["Price"] = 300,
+            ["MinStock"] = 3,
+            ["MaxStock"] = 10,
+            ["Price"] = 100,
         },
     })
 }
+
+function Shop.GetItemCurrency(shopname: string, itemname: string)
+    if Shop.Shops[shopname]["Items"][itemname] then
+        return Shop.Shops[shopname]["Items"][itemname]["Currency"]
+    end
+end
+function Shop.GetItemType(shopname: string, itemname:string)
+    if Shop.Shops[shopname]["Items"][itemname] then
+        return Shop.Shops[shopname]["Items"][itemname]["Type"]
+    end
+end
+function Shop.GetItemPrice(shopname: string, itemname: string)
+    if Shop.Shops[shopname]["Items"][itemname] then
+        return Shop.Shops[shopname]["Items"][itemname]["Price"]
+    end
+end
+
+function Shop.GetItemStock(shopname: string, itemname: string)
+    if Shop.Shops[shopname]["Items"][itemname] then
+        return Shop.Shops[shopname]["Items"][itemname]["MaxStock"]
+    end
+end
+
+function Shop.GetAllShops()
+    local Value = {}
+    for shopname, shopdata in pairs(Shop.Shops) do
+        table.insert(Value, shopname)
+    end
+    return TableUtil.Copy(Value, true)
+end
+
 function Shop.GetResetTime(name: string)
     if Shop.Shops[name] then
         local Value = Shop.Shops[name]["ResetTime"]
-        return TableUtil.Copy(Value, true)
+        return Value
     end
 end
 

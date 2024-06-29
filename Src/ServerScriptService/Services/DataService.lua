@@ -1,14 +1,19 @@
+-- { Services } --
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
 local ServerStorage = game:GetService("ServerStorage")
+-- { Modules } --
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local DatastoreModule = require(ServerStorage.Datastore)
-
+local SwordModule = require(ReplicatedStorage.Modules.SwordModule)
+local PetModule = require(ReplicatedStorage.Modules.PetModule)
+-- { Knit } --
 local DataService = Knit.CreateService {
     Name = "DataService",
     Client = {},
-    DataKey = "v2.6";
+    DataKey = "v4.04";
     DataTemplate = {
-        Coins = 0;
+        Coins = 100000;
         Gems = 0;
         Eggs = 0;
         Inventory = {
@@ -32,11 +37,11 @@ local DataService = Knit.CreateService {
     }
 }
 -- { Client Functions } --
-function DataService.Client:GetData(player, currency: string)
-    return DataService.Server:GetData(player, currency)
+function DataService.Client:GetData(player: Player, currency: string)
+    return self.Server:GetData(player, currency)
 end
 -- { Local Functions } --
-function DataService:DiscoverIsland(player, zone: string)
+function DataService:DiscoverIsland(player: Player, zone: string)
     local Datastore = DatastoreModule.find(self.DataKey, player.UserId)
     if Datastore then
         if not Datastore.Value["Zones"][zone] then
@@ -47,38 +52,92 @@ function DataService:DiscoverIsland(player, zone: string)
     end
 end
 
-function DataService:RemoveCurrency(player, currency: string, amount: number)
-    local Datastore = DatastoreModule.new(self.DataKey, player.UserId)
+function DataService:RemoveData(player: Player, currency: string, amount: number)
+    local Datastore = DatastoreModule.find(self.DataKey, player.UserId)
     if Datastore then
         if Datastore.Value[currency] >= amount then
             Datastore.Value[currency] -= amount
             if Datastore.Leaderstats then
-                Datastore.Leaderstats[currency] -= amount
+                Datastore.Leaderstats[currency].Value -= amount
             end
             return "Success"
         end
     end
 end
 
-function DataService:AddCurrency(player, currency: string, amount: number)
-    local Datastore = DatastoreModule.new(self.DataKey, player.UserId)
+function DataService:AddItem(player: Player, data: string, data2: string, data3: string, data4: string)
+    local Datastore = DatastoreModule.find(self.DataKey, player.UserId)
+    if data2 == "Swords" then
+        local SwordData = SwordModule.GetAllStats(data4)
+        Datastore.Value[data][data2][data3] = {
+            ["Name"] = SwordData["Name"],
+            ["Damage"] = SwordData["Damage"],
+            ["Equipped"] = SwordData["Equipped"],
+            ["Locked"] = SwordData["Locked"]
+        }
+    elseif data2 == "Pets" then
+        local PetData = PetModule.GetAllStats(data4)
+        Datastore.Value[data][data2][data3] = {
+            ["Name"] = PetData["Name"],
+            ["Level"] = PetData["Level"],
+            ["Equipped"] = PetData["Equipped"],
+            ["Locked"] = PetData["Locked"]
+        }
+    end
+end
+
+function DataService:UpdateShop(player: Player, data: string | number, data2: string | number, data3: string | number, amount: number | table, type: string)
+    local Datastore = DatastoreModule.find(self.DataKey, player.UserId)
     if Datastore then
-        Datastore.Value[currency] += amount
+        if type == "UpdateShopResetTime" then
+            if typeof(Datastore.Value["Shops"][data]) ~= "table" then
+                Datastore.Value["Shops"][data] = {}
+            end
+            Datastore.Value["Shops"][data]["ResetTime"] = amount
+
+            return "Success"
+        elseif type == "UpdateShopItem" then
+            if typeof(Datastore.Value["Shops"][data]["Items"]) ~= "table" then
+                Datastore.Value["Shops"][data]["Items"] = {}
+            end
+            Datastore.Value["Shops"][data]["Items"][data3] = {
+                ["Name"] = data2,
+                ["Stock"] = amount
+            }
+
+            return "Success"
+        elseif type == "UpdateItemStock" then
+            print(Datastore.Value["Shops"][data])
+            Datastore.Value["Shops"][data]["Items"][data2]["Stock"] -= 1
+
+            return "Success"
+        end
+    end
+end
+
+function DataService:AddData(player: Player, data: string, amount: number | table)
+    local Datastore = DatastoreModule.find(self.DataKey, player.UserId)
+    if Datastore then
+        Datastore.Value[data] += amount
         if Datastore.Leaderstats then
-            Datastore.Leaderstats[currency].Value += amount
+            Datastore.Leaderstats[data].Value += amount
         end
         return "Success"
     end
+    return "Fail"
 end
 
-function DataService:GetData(player, currency: string)
+function DataService:GetData(player: Player, currency: string)
     local Datastore = DatastoreModule.find(self.DataKey, player.UserId)
-    if Datastore then
+    if Datastore and currency ~= "All" then
         return Datastore.Value[currency]
+    end
+    if currency == "All" then
+        return Datastore.Value
     end
 end
 
-function DataService:DataCheck(player)
+function DataService:DataCheck(player: Player)
     local Datastore = DatastoreModule.new(self.DataKey, player.UserId)
     while Datastore.State ~= true do
         task.wait(0.1)

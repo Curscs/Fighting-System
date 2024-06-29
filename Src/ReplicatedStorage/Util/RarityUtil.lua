@@ -37,4 +37,9 @@ function RarityUtil:SelectRandom(items: table)
     end
 end
 
+function RarityUtil:MinMaxRandom(min: number, max: number)
+    local RNG = Random.new()
+    RNG:NextInteger(min, max)
+end
+
 return RarityUtil

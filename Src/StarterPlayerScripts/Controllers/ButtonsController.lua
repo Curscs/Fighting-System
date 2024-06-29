@@ -25,7 +25,7 @@ local ButtonsController = Knit.CreateController({
 -- { Functions } --
 function ButtonsController:ButtonPress(buttonname: string)
     local InventoryController = Knit.GetController("InventoryController")
-    if DebounceUtil:getDebounceStatus(Player, "SideButtons", 0.5) then
+    if DebounceUtil:getDebounceStatus(Player, "SideButtons", 0.1) then
         if buttonname == "InventoryButton" then
             InventoryController:Trigger()
         end
