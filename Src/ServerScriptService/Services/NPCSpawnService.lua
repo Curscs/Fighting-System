@@ -37,7 +37,7 @@ function NPCSpawnService:SpawnNPC(zonename: string)
         end
     end
 
-    local AreaInstance = Workspace.Boxes.NPCSpawns[zonename]
+    local AreaInstance = Workspace.Game.Boxes.NPCSpawns[zonename]
     local AreaSize = AreaInstance.Size / 2
     local XPos = RNG:NextNumber(-AreaSize.X, AreaSize.X)
     local YPos = 0
@@ -49,11 +49,11 @@ function NPCSpawnService:SpawnNPC(zonename: string)
 
     local FilterInstances = {}
     -- blacklist Zones
-    for _, child in ipairs(Workspace.Boxes.Zones:GetChildren()) do
+    for _, child in ipairs(Workspace.Game.Boxes.Zones:GetChildren()) do
         table.insert(FilterInstances, child)
     end
     -- blacklist NPCSpawns
-    for _, child in ipairs(Workspace.Boxes.NPCSpawns:GetChildren()) do
+    for _, child in ipairs(Workspace.Game.Boxes.NPCSpawns:GetChildren()) do
         table.insert(FilterInstances, child)
     end
     -- blacklist Player Characters
@@ -81,8 +81,9 @@ function NPCSpawnService:SpawnNPC(zonename: string)
     CheckID()
     NPCClone.Parent = Workspace.Game.NPCs[zonename]
     NPCClone.Name = ID
+    NPCClone:SetAttribute("Name", SelectedNPC)
     NPCClone:PivotTo(CFrame.new(SpawnPos))
-    NPCClone:AddTag("NPC")
+    NPCClone:AddTag("Monster")
 end
 
 return NPCSpawnService

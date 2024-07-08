@@ -16,12 +16,12 @@ local InventoryScreen = MainFolder:WaitForChild("Inventory")
 local InventoryFrame = InventoryScreen:WaitForChild("InventoryFrame")
 local UIScale = InventoryFrame:WaitForChild("UIScale")
 
-local ItemsTemplates = InventoryFrame:WaitForChild("ItemsTemplates")
+local ItemsTemplatesFolder = InventoryFrame:WaitForChild("ItemsTemplates")
 local ItemsTemplates = {
-    NormalTemplate = ItemsTemplates:WaitForChild("NormalTemplate"),
-    LegendaryTemplate = ItemsTemplates:WaitForChild("LegendaryTemplate"),
-    SecretTemplate = ItemsTemplates:WaitForChild("SecretTemplate"),
-    ChromaticTemplate = ItemsTemplates:WaitForChild("ChromaticTemplate"),
+    NormalTemplate = ItemsTemplatesFolder:WaitForChild("NormalTemplate"),
+    LegendaryTemplate = ItemsTemplatesFolder:WaitForChild("LegendaryTemplate"),
+    SecretTemplate = ItemsTemplatesFolder:WaitForChild("SecretTemplate"),
+    ChromaticTemplate = ItemsTemplatesFolder:WaitForChild("ChromaticTemplate"),
 }
 
 local RightFrame = InventoryFrame:WaitForChild("Right")

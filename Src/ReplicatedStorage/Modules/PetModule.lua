@@ -3,13 +3,13 @@ local TableUtil = require(ReplicatedStorage.Packages.TableUtil)
 
 local Pet = {}
 
-function Pet.new(name: string, rarity: string, state: string, damage: number, coinmul: number)
+function Pet.new(name: string, rarity: string, state: string, power: number, moveset: table)
     local self = {}
     self.Name = name
     self.Rarity = rarity
+    self.Power = power
+    self.Moveset = moveset
     self.State = state
-    self.Damage = damage
-    self.CoinMul = coinmul
     self.Shiny = false
     self.Equipped = false
     self.Locked = false
@@ -19,9 +19,9 @@ function Pet.new(name: string, rarity: string, state: string, damage: number, co
 end
 
 Pet.Pets = {
-    ["Doggy"] = Pet.new("Doggy", "Common", "Flying", 5, 4),
-    ["Kitty"] = Pet.new("Kitty", "Common", "Walking", 4, 5),
-    ["???"] = Pet.new("???", "Chromatic", "Flying", 100, 500000),
+    ["Doggy"] = Pet.new("Doggy", "Common", "Flying", 1, {"Bite"}),
+    ["Kitty"] = Pet.new("Kitty", "Common", "Walking", 1, {"Bite"}),
+    ["???"] = Pet.new("???", "Chromatic", "Flying", 1, {"Bite"}),
 }
 
 Pet.Images = {
