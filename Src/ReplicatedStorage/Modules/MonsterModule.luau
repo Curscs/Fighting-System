@@ -9,5 +9,9 @@ function Monster.new(name: string, type: string, health: number, moveset: table)
     return self
 end
 
+Monster.Monsters = {
+    ["Human"] = Monster.new("Human", "Humanoid", 150, {"Punch"})
+}
+
 return Monster
 

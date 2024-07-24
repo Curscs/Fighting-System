@@ -20,6 +20,7 @@ local DataService = Knit.CreateService {
             Swords = {};
             Pets = {};
             Items = {};
+            Moves = {"Punch"}
         };
         Shops = {};
         Zones = {

@@ -5,11 +5,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local UserGameSettings = UserSettings():GetService("UserGameSettings")
 -- { Modules } --
+local Knit = require(ReplicatedStorage.Packages.Knit)
 local Timer = require(ReplicatedStorage.Packages.Timer)
 local Component = require(ReplicatedStorage.Packages.Component)
 local MouseUtil = require(ReplicatedStorage.Util.MouseUtil)
 local CameraUtil = require(ReplicatedStorage.Util.CameraUtil)
 local UIUtil = require(ReplicatedStorage.Util.UIUtil)
+local ModelWrapper = require(ReplicatedStorage.Util.ModelwrapperUtil)
 local PlrModule = Player.PlayerScripts:FindFirstChild("PlayerModule") or Player.PlayerScripts:WaitForChild("PlayerModule", 0.1)
 local PlayerModule = require(PlrModule)
 -- { Camera Util } --
@@ -26,7 +28,6 @@ local Monster = Component.new({
 -- { Functions } --
 function Monster:Construct()
     self.ID = self.Instance.Name
-    self.Health = nil
     self.Name = nil
     self.Range = 40
     -- { Timer } --
@@ -35,13 +36,16 @@ function Monster:Construct()
 end
 
 function Monster:Clicked()
-    Controls:Disable()
     local PlrCharPos = self.Instance.PrimaryPart.CFrame * CFrame.new(0,0,-10)
+    local WrappedModel = ModelWrapper.new(self.Instance)
+    Controls:Disable()
+    WrappedModel:SetCollisions(false)
     Player.Character.Humanoid:MoveTo(PlrCharPos.Position)
     Player.Character.Humanoid.MoveToFinished:Wait()
-    Camera:MoveTo(self.Instance.PrimaryPart.CFrame * CFrame.Angles(0,math.rad(-90),0) * CFrame.new(-5, 5, 10) * CFrame.Angles(math.rad(-20),0,0), 1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    WrappedModel:ResetCollisions()
     Player.Character.PrimaryPart.CFrame = PlrCharPos
     Player.Character.PrimaryPart.CFrame = CFrame.lookAt(Player.Character.PrimaryPart.Position, self.Instance.PrimaryPart.Position)
+    Camera:MoveTo(self.Instance.PrimaryPart.CFrame * CFrame.Angles(0,math.rad(-90),0) * CFrame.new(-5, 5, 10) * CFrame.Angles(math.rad(-20),0,0), 1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
     UIUtil.FolderVisiblity("Main", false)
     UIUtil.FolderVisiblity("Misc", false)
     UIUtil.FolderVisiblity("Fight", true)
@@ -60,22 +64,28 @@ function Monster:Hovered()
 end
 -- { Initiation } --
 Monster.Started:Connect(function(self)
+    -- detect clicking
+    local MonsterService = Knit.GetService("MonsterService")
     UserInputService.InputBegan:Connect(function(input)
-        if (Player.Character.PrimaryPart.Position - self.Instance.PrimaryPart.Position).Magnitude <= self.Range then
-            if MouseUtil:TargetClicked(input, "MouseButton1", self.Instance.Name) == "Success" then
+        if MouseUtil:TargetClicked(input, "MouseButton1", self.Instance.Name) == "Success" then
+            if MonsterService:Click(self.Instance) == "Success" then
                 self:Clicked()
             end
         end
     end)
 
+    -- detect hovering
     self.HoverTimer.Tick:Connect(function()
-        if (Player.Character.PrimaryPart.Position - self.Instance.PrimaryPart.Position).Magnitude <= self.Range then
+        if self.Instance.PrimaryPart == nil then
+            return
+        elseif (Player.Character.PrimaryPart.Position - self.Instance.PrimaryPart.Position).Magnitude <= self.Range then
             if MouseUtil:TargetHovered(self.Instance.Name) == "Success" then
                 self:Hovered()
             end
         end
     end)
 
+    -- timer for when the outline exists
     self.WhileHoveredTimer.Tick:Connect(function()
         if MouseUtil:TargetHovered(self.Instance.Name) == "Fail" then
             self.WhileHoveredTimer:Stop()

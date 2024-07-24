@@ -13,13 +13,6 @@ local NPCSpawnService = Knit.CreateService({
     Client = {}
 })
 
-function NPCSpawnService:DespawnNPCs(zonename: string)
-    local NPCFolder = Workspace.Game.NPCs[zonename]
-    for _, npc in pairs(NPCFolder:GetChildren()) do
-        npc:Destroy()
-    end
-end
-
 function NPCSpawnService:SpawnNPC(zonename: string)
     local SelectedNPC = RarityUtil:SelectRandom(ZoneModule.GetAllNPCs(zonename))
     local NPCRepFolder = ReplicatedStorage.Items.NPCs
@@ -72,16 +65,11 @@ function NPCSpawnService:SpawnNPC(zonename: string)
     OffsetPos = Vector3.new(XPos, YPos + 3 * NPCScale, ZPos)
     SpawnPos = MainPos + OffsetPos
 
-    if not Workspace.Game.NPCs:FindFirstChild(zonename) then
-        local Folder = Instance.new("Folder")
-        Folder.Name = zonename
-        Folder.Parent = Workspace.Game.NPCs
-    end
-
     CheckID()
-    NPCClone.Parent = Workspace.Game.NPCs[zonename]
+    NPCClone.Parent = Workspace.Game.NPCs
     NPCClone.Name = ID
     NPCClone:SetAttribute("Name", SelectedNPC)
+    NPCClone:SetAttribute("State", "Idle")
     NPCClone:PivotTo(CFrame.new(SpawnPos))
     NPCClone:AddTag("Monster")
 end
